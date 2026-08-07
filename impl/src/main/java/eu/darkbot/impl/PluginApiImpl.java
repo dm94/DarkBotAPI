@@ -13,6 +13,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.Objects;
 import java.util.Set;
@@ -23,7 +24,7 @@ import java.util.stream.Stream;
 @SuppressWarnings("unchecked")
 public class PluginApiImpl implements PluginAPI {
 
-    protected final Set<Singleton> singletons = new HashSet<>();
+    protected final Set<Singleton> singletons = new LinkedHashSet<>();
     protected final Set<Singleton> weakSingletons = Collections.newSetFromMap(new WeakHashMap<>());
     protected final Set<Class<?>> implClasses = new HashSet<>();
     protected final Set<ClassDecorator<?>> decorators = new HashSet<>();
@@ -66,10 +67,18 @@ public class PluginApiImpl implements PluginAPI {
         Set<Singleton> workingSet = null;
         if (Singleton.class.isAssignableFrom(clazz)) {
             workingSet = Objects.equals(clazz.getClassLoader(), getClass().getClassLoader()) ? singletons : weakSingletons;
+            // Deterministic resolution: the last registered instance matching the requested
+            // type wins (the sets preserve insertion order). A plain HashSet findAny() would
+            // make overlapping implementations a coin-flip; "last registered wins" lets an
+            // adapter (e.g. the Unity packet adapter) override the memory managers by
+            // registering its instances after them. Single-implementation resolution is
+            // unaffected.
+            T result = null;
             for (Singleton implementation : workingSet) {
                 if (clazz.isInstance(implementation))
-                    return clazz.cast(implementation);
+                    result = clazz.cast(implementation);
             }
+            if (result != null) return result;
         }
         return createNewInstance(clazz, workingSet);
     }
