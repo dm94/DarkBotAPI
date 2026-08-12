@@ -63,7 +63,11 @@ public class MapTraveler implements Listener {
     }
 
     public void setTarget(GameMap target) {
-        shipTpWait = mapChangeWait = -1;
+        shipTpWait = -1;
+        // Portals may arrive a few frames after the map/session snapshot. Keep the traveler
+        // alive long enough to receive them instead of treating the initial empty view as a
+        // completed route immediately.
+        mapChangeWait = System.currentTimeMillis() + PORTAL_LOAD_WAIT;
         this.target = target;
         this.current = null;
         this.done = false;
