@@ -66,6 +66,20 @@ public interface HeroItemsAPI extends API.Singleton {
     ItemUseResult useItem(@NotNull SelectableItem selectableItem, double minWait, ItemFlag... itemFlags);
 
     /**
+     * Uses a server menu item directly, without requiring it to be assigned to a standard or
+     * premium quick-slot. Packet-backed implementations may support menu ids introduced after
+     * this API's {@link SelectableItem} enum; legacy memory implementations return
+     * {@link ItemUseResult#NOT_AVAILABLE} by default.
+     *
+     * @param menuItemId server-side menu item id, for example {@code equipment_extra_cpu_ish-01}
+     * @param itemFlags additional validation flags
+     * @return the result of the direct activation attempt
+     */
+    default ItemUseResult useItemId(@NotNull String menuItemId, ItemFlag... itemFlags) {
+        return ItemUseResult.NOT_AVAILABLE;
+    }
+
+    /**
      * Find the item corresponding to a user set keyBind
      *
      * @param keyBind the character to press
