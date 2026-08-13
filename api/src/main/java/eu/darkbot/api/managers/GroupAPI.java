@@ -93,25 +93,31 @@ public interface GroupAPI extends API.Singleton {
      */
     List<? extends GroupMember.Invite> getInvites();
 
-    /*
-    TODO: These need to be properly implemented, in a way that will queue operations,
-          otherwise this will be very prone to failing.
-          Also consider maybe not having an API that works via direct method calls, and instead
-          works by assigning tags to players. Although it may be inconsistent with how many other
-          things operate in the bot.
+    /** Selects a member in the group window, when the transport supports it. */
+    default boolean selectMember(int id) { return false; }
 
-    void kickMember(int id);
+    /** Sends an invitation by username, when the transport supports it. */
+    default boolean invite(String username) { return false; }
 
-    default void kickMember(GroupMember member) {
-        kickMember(member.getId());
-    }
+    /** Sends an invitation by user id, when the transport supports it. */
+    default boolean invite(int id) { return false; }
 
-    default void kickMember(Ship ship) {
-        kickMember(ship.getId());
-    }
+    /** Accepts an incoming invitation, when the transport supports it. */
+    default boolean acceptInvite(GroupMember.Invite invite) { return false; }
 
-    void sendInvite(String username);
-    void acceptInvite(GroupMember.Invite invite);
-    */
+    /** Rejects an incoming invitation, when the transport supports it. */
+    default boolean rejectInvite(GroupMember.Invite invite) { return false; }
+
+    /** Cancels an outgoing invitation. */
+    default boolean cancelInvite(int id) { return false; }
+
+    /** Leaves the current group. */
+    default boolean leaveGroup() { return false; }
+
+    /** Changes the invitation mode: false=boss-only, true=free-for-all. */
+    default boolean setOpen(boolean open) { return false; }
+
+    /** Toggles invitation blocking. */
+    default boolean toggleInvitationBlock() { return false; }
 
 }
