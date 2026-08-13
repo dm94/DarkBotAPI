@@ -3,6 +3,7 @@ package eu.darkbot.api.managers;
 import eu.darkbot.api.API;
 import eu.darkbot.api.game.items.Item;
 import eu.darkbot.api.game.items.ItemCategory;
+import eu.darkbot.api.game.items.ItemTimer;
 import eu.darkbot.api.game.items.ItemFlag;
 import eu.darkbot.api.game.items.ItemUseResult;
 import eu.darkbot.api.game.items.SelectableItem;
@@ -126,5 +127,37 @@ public interface HeroItemsAPI extends API.Singleton {
      */
     @Deprecated
     @Nullable Character getKeyBind(SelectableItem item);
+
+    /** Event fired after a server status snapshot changes an item. */
+    class ItemStatusEvent implements eu.darkbot.api.events.Event {
+        private final Item item;
+
+        public ItemStatusEvent(Item item) {
+            this.item = item;
+        }
+
+        public Item getItem() {
+            return item;
+        }
+    }
+
+    /** Event fired after a server timer/cooldown snapshot changes an item. */
+    class ItemTimerEvent implements eu.darkbot.api.events.Event {
+        private final Item item;
+        private final ItemTimer timer;
+
+        public ItemTimerEvent(Item item, ItemTimer timer) {
+            this.item = item;
+            this.timer = timer;
+        }
+
+        public Item getItem() {
+            return item;
+        }
+
+        public ItemTimer getTimer() {
+            return timer;
+        }
+    }
 
 }

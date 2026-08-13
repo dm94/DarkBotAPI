@@ -199,6 +199,64 @@ public interface PetAPI extends Pet, API.Singleton {
         int getId();
     }
 
+    /** Event fired when the hero pet is activated or deactivated on the map. */
+    class PetActivationEvent implements Event {
+        private final Pet pet;
+        private final boolean active;
+
+        public PetActivationEvent(Pet pet, boolean active) {
+            this.pet = pet;
+            this.active = active;
+        }
+
+        public Pet getPet() {
+            return pet;
+        }
+
+        public boolean isActive() {
+            return active;
+        }
+    }
+
+    /** Event fired after a packet updates the hero pet's status snapshot. */
+    class PetStatusEvent implements Event {
+        private final Pet pet;
+
+        public PetStatusEvent(Pet pet) {
+            this.pet = pet;
+        }
+
+        public Pet getPet() {
+            return pet;
+        }
+    }
+
+    /** Event fired when the server confirms a pet gear activation change. */
+    class PetGearEvent implements Event {
+        private final Pet pet;
+        private final PetGear gear;
+        private final boolean active;
+
+        public PetGearEvent(Pet pet, PetGear gear, boolean active) {
+            this.pet = pet;
+            this.gear = gear;
+            this.active = active;
+        }
+
+        public Pet getPet() {
+            return pet;
+        }
+
+        @Nullable
+        public PetGear getGear() {
+            return gear;
+        }
+
+        public boolean isActive() {
+            return active;
+        }
+    }
+
     /**
      * Event when npc list in current map changes in the pet locator module
      */
