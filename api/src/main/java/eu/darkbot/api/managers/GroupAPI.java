@@ -1,6 +1,7 @@
 package eu.darkbot.api.managers;
 
 import eu.darkbot.api.API;
+import eu.darkbot.api.events.Event;
 import eu.darkbot.api.game.entities.Ship;
 import eu.darkbot.api.game.group.GroupMember;
 import org.jetbrains.annotations.Nullable;
@@ -119,5 +120,76 @@ public interface GroupAPI extends API.Singleton {
 
     /** Toggles invitation blocking. */
     default boolean toggleInvitationBlock() { return false; }
+
+    /** Event fired when a member appears in the current group snapshot. */
+    class GroupMemberAddedEvent implements Event {
+        private final GroupMember member;
+
+        public GroupMemberAddedEvent(GroupMember member) {
+            this.member = member;
+        }
+
+        public GroupMember getMember() {
+            return member;
+        }
+    }
+
+    /** Event fired when an existing member receives a packet update. */
+    class GroupMemberUpdatedEvent implements Event {
+        private final GroupMember member;
+
+        public GroupMemberUpdatedEvent(GroupMember member) {
+            this.member = member;
+        }
+
+        public GroupMember getMember() {
+            return member;
+        }
+    }
+
+    /** Event fired when a member disappears from the current group snapshot. */
+    class GroupMemberRemovedEvent implements Event {
+        private final GroupMember member;
+
+        public GroupMemberRemovedEvent(GroupMember member) {
+            this.member = member;
+        }
+
+        public GroupMember getMember() {
+            return member;
+        }
+    }
+
+    /** Event fired when an invitation is added or removed by the server. */
+    class GroupInvitationEvent implements Event {
+        private final GroupMember.Invite invite;
+        private final boolean removed;
+
+        public GroupInvitationEvent(GroupMember.Invite invite, boolean removed) {
+            this.invite = invite;
+            this.removed = removed;
+        }
+
+        public GroupMember.Invite getInvite() {
+            return invite;
+        }
+
+        public boolean isRemoved() {
+            return removed;
+        }
+    }
+
+    /** Event fired when the server closes the current group. */
+    class GroupClosedEvent implements Event {
+        private final int groupId;
+
+        public GroupClosedEvent(int groupId) {
+            this.groupId = groupId;
+        }
+
+        public int getGroupId() {
+            return groupId;
+        }
+    }
 
 }

@@ -21,6 +21,7 @@ import eu.darkbot.api.game.entities.StaticEntity;
 import eu.darkbot.api.game.entities.Station;
 import eu.darkbot.api.game.other.Obstacle;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnmodifiableView;
 
 import java.util.Collection;
@@ -206,6 +207,72 @@ public interface EntitiesAPI extends API.Singleton {
     class EntityRemoveEvent extends EntityEvent {
         public EntityRemoveEvent(Entity entity) {
             super(entity);
+        }
+    }
+
+    /** Event fired when the server confirms damage against an entity. */
+    @SuppressWarnings("PMD.DataClass")
+    class DamageEvent implements Event {
+        private final @Nullable Entity attacker;
+        private final Entity victim;
+        private final long amount;
+        private final boolean noLock;
+
+        public DamageEvent(@Nullable Entity attacker, Entity victim, long amount, boolean noLock) {
+            this.attacker = attacker;
+            this.victim = victim;
+            this.amount = amount;
+            this.noLock = noLock;
+        }
+
+        @Nullable public Entity getAttacker() {
+            return attacker;
+        }
+
+        public Entity getVictim() {
+            return victim;
+        }
+
+        public long getAmount() {
+            return amount;
+        }
+
+        /** @return true when the source packet was {@code AttackHitNoLockCommand}. */
+        public boolean isNoLock() {
+            return noLock;
+        }
+    }
+
+    /** Event fired before a destroyed entity is removed from the live entity collections. */
+    class EntityDestroyedEvent extends EntityEvent {
+        private final @Nullable Entity attacker;
+        private final int explosionTypeId;
+
+        public EntityDestroyedEvent(Entity entity, @Nullable Entity attacker, int explosionTypeId) {
+            super(entity);
+            this.attacker = attacker;
+            this.explosionTypeId = explosionTypeId;
+        }
+
+        @Nullable public Entity getAttacker() {
+            return attacker;
+        }
+
+        public int getExplosionTypeId() {
+            return explosionTypeId;
+        }
+    }
+
+    /** Event fired when a collectable box is confirmed as collected by the server. */
+    class LootCollectedEvent implements Event {
+        private final Box box;
+
+        public LootCollectedEvent(Box box) {
+            this.box = box;
+        }
+
+        public Box getBox() {
+            return box;
         }
     }
 
