@@ -247,8 +247,7 @@ public interface PetAPI extends Pet, API.Singleton {
             return pet;
         }
 
-        @Nullable
-        public PetGear getGear() {
+        @Nullable public PetGear getGear() {
             return gear;
         }
 

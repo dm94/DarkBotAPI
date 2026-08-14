@@ -223,4 +223,36 @@ public interface StatsAPI extends API.Singleton {
         }
     }
 
+    /**
+     * Event emitted when the map server confirms a concrete reward or collected item.
+     * The amount is the delta from this reward message, not the running account total.
+     */
+    @SuppressWarnings("PMD.DataClass")
+    class RewardEvent implements Event {
+        private final String lootId;
+        private final double amount;
+        private final String source;
+
+        public RewardEvent(String lootId, double amount, String source) {
+            this.lootId = lootId == null ? "" : lootId;
+            this.amount = amount;
+            this.source = source == null ? "" : source;
+        }
+
+        /** @return the server loot id, or a standard currency id for LMCollect packets. */
+        public String getLootId() {
+            return lootId;
+        }
+
+        /** @return the amount granted by this packet. */
+        public double getAmount() {
+            return amount;
+        }
+
+        /** @return the packet name that produced this event. */
+        public String getSource() {
+            return source;
+        }
+    }
+
 }
