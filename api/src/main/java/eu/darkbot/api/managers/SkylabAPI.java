@@ -1,7 +1,6 @@
 package eu.darkbot.api.managers;
 
 import eu.darkbot.api.API;
-import eu.darkbot.api.extensions.Task;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,62 +9,29 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-/**
- * Permite realizar acciones relacionadas con el skylab y consultar su estado,
- * alimentado por los paquetes del cliente Unity.
- * Debe llamarse desde un hilo secundario, usado en {@link Task}s.
- *
- * @see Task
- */
 @SuppressWarnings("PMD.ExcessivePublicCount")
 public interface SkylabAPI extends API.Singleton {
 
-    /**
-     * Solicita al servidor la vista de detalle de un módulo del skylab.
-     *
-     * @param moduleName nombre del módulo solicitado
-     * @return true si la petición pudo enviarse
-     */
     default boolean viewModule(String moduleName) {
         return false;
     }
 
-    /**
-     * Solicita la compra de un robot para la construcción indicada.
-     *
-     * @param construction construcción destino del robot
-     * @param robotType    tipo de robot a comprar
-     * @return true si la petición pudo enviarse
-     */
     default boolean purchaseRobot(String construction, int robotType) {
         return false;
     }
 
-    /**
-     * Envía una acción de producción o transporte del skylab.
-     *
-     * @param action acción a realizar
-     * @return true si la petición pudo enviarse
-     */
     default boolean sendAction(Action action) {
         return false;
     }
 
-    /** Devuelve los almacenes de mineral conocidos, como instantánea de solo lectura. */
     default Collection<OreStorage> getOreStorages() {
         return Collections.emptyList();
     }
 
-    /** Devuelve los módulos del skylab conocidos, como instantánea de solo lectura. */
     default Collection<SkylabModule> getModules() {
         return Collections.emptyList();
     }
 
-    /**
-     * Devuelve el módulo del tipo indicado, si se conoce.
-     *
-     * @param moduleType tipo del módulo buscado
-     */
     default Optional<SkylabModule> getModule(String moduleType) {
         for (SkylabModule module : getModules()) {
             if (module.getType().equals(moduleType)) return Optional.of(module);
@@ -73,45 +39,34 @@ public interface SkylabAPI extends API.Singleton {
         return Optional.empty();
     }
 
-    /** Devuelve el nombre del módulo de la última vista de detalle recibida. */
     default Optional<String> getSelectedModuleName() {
         return Optional.empty();
     }
 
-    /**
-     * Devuelve la eficiencia del almacén informada por {@code SkylabStorageInfoCommand},
-     * o {@code 0} si se desconoce.
-     */
     default int getStorageEfficiency() {
         return 0;
     }
 
-    /** Devuelve la productividad del último módulo detallado, si se conoce. */
     default Optional<Productivity> getProductivity() {
         return Optional.empty();
     }
 
-    /** Devuelve la información del procesador de xenomit, si se conoce. */
     default Optional<XenoInfo> getXenoInfo() {
         return Optional.empty();
     }
 
-    /** Devuelve la información del colector, si se conoce. */
     default Optional<CollectorInfo> getCollectorInfo() {
         return Optional.empty();
     }
 
-    /** Devuelve el coste de mejora del último módulo detallado, si se conoce. */
     default Optional<UpgradeCost> getUpgradeCost() {
         return Optional.empty();
     }
 
-    /** Devuelve el último recibo de acción recibido del servidor, si existe. */
     default Optional<Receipt> getLastReceipt() {
         return Optional.empty();
     }
 
-    /** Acción de producción o transporte enviada mediante {@code SkylabActionRequest}. */
     @SuppressWarnings({"PMD.DataClass", "PMD.ExcessiveParameterList"})
     final class Action {
         private final String construction;
@@ -181,7 +136,7 @@ public interface SkylabAPI extends API.Singleton {
         }
     }
 
-    /** Almacén de un mineral informado por {@code SkylabStorageOreCommand}. */
+    @SuppressWarnings("PMD.DataClass")
     final class OreStorage {
         private final int oreId;
         private final String oreName;
@@ -219,7 +174,6 @@ public interface SkylabAPI extends API.Singleton {
         }
     }
 
-    /** Estado de un módulo informado por {@code SkylabMainViewModuleCommand}. */
     @SuppressWarnings("PMD.DataClass")
     final class SkylabModule {
         private final String type;
@@ -271,7 +225,6 @@ public interface SkylabAPI extends API.Singleton {
         }
     }
 
-    /** Precio de robot informado por {@code SkylabRobotPriceCommand}. */
     final class RobotPrice {
         private final String priceType;
         private final int value;
@@ -302,7 +255,6 @@ public interface SkylabAPI extends API.Singleton {
         }
     }
 
-    /** Tiempo restante de un robot activo informado por {@code SkylabActiveRobotsLeftTimeCommand}. */
     final class RobotProduction {
         private final int uridium;
         private final long leftTime;
@@ -328,10 +280,6 @@ public interface SkylabAPI extends API.Singleton {
         }
     }
 
-    /**
-     * Productividad de un módulo informada por {@code SkylabModuleProductivityCommand}.
-     * Los precios de robot son opcionales porque el servidor solo los envía si están activos.
-     */
     @SuppressWarnings("PMD.DataClass")
     final class Productivity {
         private final int efficiency;
@@ -385,7 +333,6 @@ public interface SkylabAPI extends API.Singleton {
         }
     }
 
-    /** Información del procesador de xenomit informada por {@code SkylabXenoInfoCommand}. */
     final class XenoInfo {
         private final int activeEfficiency;
         private final int activeConsumption;
@@ -426,7 +373,6 @@ public interface SkylabAPI extends API.Singleton {
         }
     }
 
-    /** Información del colector informada por {@code SkylabCollectorInfoCommand}. */
     final class CollectorInfo {
         private final int production;
         private final long leftTime;
@@ -456,7 +402,6 @@ public interface SkylabAPI extends API.Singleton {
         }
     }
 
-    /** Coste de mejora informado por {@code SkylabModuleUpgradeCommand}. */
     @SuppressWarnings("PMD.DataClass")
     final class UpgradeCost {
         private final int prometium;
@@ -503,7 +448,6 @@ public interface SkylabAPI extends API.Singleton {
         }
     }
 
-    /** Clave de mensaje localizable derivada de {@code BaseStackCommand}. */
     final class MessageKey {
         private final int enumKey;
         private final String stringKey;
@@ -534,7 +478,6 @@ public interface SkylabAPI extends API.Singleton {
         }
     }
 
-    /** Recibo de una acción informado por {@code SkylabUnifiedReceiptCommand}. */
     @SuppressWarnings("PMD.DataClass")
     final class Receipt {
         private final int resultId;
