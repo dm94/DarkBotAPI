@@ -6,5 +6,7 @@ public interface SessionAPI extends API.Singleton {
 
     boolean isSessionValid();
 
+    boolean disconnect();
+
     boolean requestRelogin();
 }
